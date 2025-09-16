@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  password        String
+  name            String
+  interests       String[]
+  careerInterests String[]  @map("career_interests")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  activities      UserActivity[]
+  
+  @@map("users")
+}
+
+model Course {
+  id              Int       @id @default(autoincrement())
+  title           String
+  description     String?
+  category        String?
+  tags            String[]
+  difficulty      Difficulty
+  popularity      Int       @default(0)
+  enrollmentCount Int       @default(0) @map("enrollment_count")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  activities      UserActivity[]
+  
+  @@map("courses")
+}
+
+model UserActivity {
+  id           Int       @id @default(autoincrement())
+  userId       Int          @map("user_id")
+  courseId     Int          @map("course_id")
+  activityType ActivityType @map("activity_type")
+  duration     Int?
+  timestamp    DateTime     @default(now())
+  
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+  
+  @@map("user_activities")
+}
+
+enum Difficulty {
+  beginner
+  intermediate
+  advanced
+}
+
+enum ActivityType {
+  view
+  scroll
+  enroll
+}

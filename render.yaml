@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: course-recommendation-api
+    env: docker
+    docker:
+      dockerfile: Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromSecret: DATABASE_URL
+      - key: JWT_SECRET
+        fromSecret: JWT_SECRET
+      - key: NODE_ENV
+        value: production
+    port: 3000
